@@ -34,6 +34,12 @@ class ChartEditorNoteSprite extends FlxSprite
   public var noteData(default, set):Null<SongNoteData>;
 
   /**
+   * The mania of the current chart.
+   * Non-Zero'd
+   */
+  public var mania:Int = 4;
+
+  /**
    * The name of the note style currently in use.
    */
   public var noteStyle(get, never):String;
@@ -96,6 +102,18 @@ class ChartEditorNoteSprite extends FlxSprite
     this.animation.addByPrefix('tapDownPixel', 'pixel5');
     this.animation.addByPrefix('tapUpPixel', 'pixel6');
     this.animation.addByPrefix('tapRightPixel', 'pixel7');
+
+    // Custom animation adding
+
+    for (i in 1...9)
+    {
+      for (j in 1...9)
+      {
+        this.animation.addByPrefix('tap${i}${j}Funkin', 'mania ${i} note ${j}');
+        this.animation.addByPrefix('hold${i}${j}Funkin', 'mania ${i} note ${j}');
+        this.animation.addByPrefix('holdEnd${i}${j}Funkin', 'mania ${i} note ${j}');
+      }
+    }
   }
 
   static var noteFrameCollection:Null<FlxFramesCollection> = null;
@@ -111,7 +129,7 @@ class ChartEditorNoteSprite extends FlxSprite
     // TODO: Automatically iterate over the list of note skins.
 
     // Normal notes
-    var frameCollectionNormal:FlxAtlasFrames = Paths.getSparrowAtlas('NOTE_assets');
+    var frameCollectionNormal:FlxAtlasFrames = Paths.getSparrowAtlas('notes');
 
     for (frame in frameCollectionNormal.frames)
     {
@@ -199,8 +217,9 @@ class ChartEditorNoteSprite extends FlxSprite
     var baseAnimationName:String = 'tap';
 
     // Play the appropriate animation for the type, direction, and skin.
-    var dirName:String = overrideData != null ? SongNoteData.buildDirectionName(overrideData) : this.noteData.getDirectionName();
-    var animationName:String = '${baseAnimationName}${dirName}${this.noteStyle.toTitleCase()}';
+    var dirName:Int = 1; // overrideData != null ? SongNoteData.buildDirectionName(overrideData) : this.noteData.getDirectionName();
+    dirName = this.noteData.getDirection(this.mania) + 1;
+    var animationName:String = '${baseAnimationName}${this.mania}${dirName}${this.noteStyle.toTitleCase()}';
 
     this.animation.play(animationName);
 

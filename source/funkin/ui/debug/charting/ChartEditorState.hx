@@ -2481,19 +2481,6 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
       add(gridGhostEvent);
       gridGhostEvent.zIndex = 12;
     }
-    else
-    {
-      // if (gridTiledSprite != null) remove(gridTiledSprite);
-
-      // gridTiledSprite = new FlxTiledSprite(gridBitmap, gridBitmap.width, 1000, false, true);
-      gridTiledSprite.width = gridBitmap.width;
-      gridTiledSprite.x = GRID_X_POS; // Center the grid (again).
-      // gridTiledSprite.y =
-      // add(gridTiledSprite);
-      // gridTiledSprite.zIndex = 10;
-
-      // this.scrollPositionInPixels = this.scrollPositionInPixels;
-    }
 
     buildNoteGroup();
 
@@ -2521,6 +2508,11 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
     playheadBlock.x = -PLAYHEAD_SCROLL_AREA_WIDTH;
     playheadBlock.y = -PLAYHEAD_HEIGHT / 2;
     gridPlayhead.add(playheadBlock);
+
+    if (!firstTime)
+    {
+      gridPlayhead.y = GRID_INITIAL_Y_POS + this.playheadPositionInPixels;
+    }
 
     // Return to firstTime call
     if (firstTime)
@@ -2563,6 +2555,9 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
    */
   function updateGridElements():Void
   {
+    gridTiledSprite.width = gridBitmap.width;
+    gridTiledSprite.x = GRID_X_POS; // Center the grid (again).
+
     var measureTicksWidth = (GRID_SIZE);
     notePreview.x = NOTE_PREVIEW_X_POS;
     measureTicks.x = gridTiledSprite.x - measureTicksWidth;
@@ -3670,6 +3665,9 @@ class ChartEditorState extends UIState // UIState derives from MusicBeatState
         var noteSprite:ChartEditorNoteSprite = renderedNotes.recycle(() -> new ChartEditorNoteSprite(this));
         // trace('Creating new Note... (${renderedNotes.members.length})');
         noteSprite.parentState = this;
+
+        // Handle mania
+        noteSprite.mania = currentSongChartMania;
 
         // The note sprite handles animation playback and positioning.
         noteSprite.noteData = noteData;
